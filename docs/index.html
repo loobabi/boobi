@@ -3,87 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nomai Translator Tool</title>
+    <title>Nomai Signal Logs</title>
     <style>
         :root {
-            --bg-color: #070b12;
-            --nomai-cyan: #00f3ff;
-            --nomai-glow: rgba(0, 243, 255, 0.4);
-            --nomai-dim: #054854;
-            --text-color: #d1f7ff;
-            --font-family: 'Courier New', Courier, monospace;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --nomai-teal: #39c5bb;
+            --node-active: #ffab70;
+            --border-color: #30363d;
         }
 
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
-            font-family: var(--font-family);
-            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
-            background-image: 
-                radial-gradient(circle at 50% 30%, #0d1b2a 0%, #070b12 70%),
-                radial-gradient(2px 2px at 20px 30px, #ffffff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 40px 70px, rgba(0, 243, 255, 0.8), rgba(0,0,0,0)),
-                radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 100% 100%, 200px 200px, 300px 300px, 150px 150px;
+            min-height: 100vh;
         }
 
-        .header-hud {
-            width: 100%;
+        .container {
             max-width: 600px;
-            border: 1px solid var(--nomai-dim);
-            padding: 12px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            background: rgba(5, 20, 30, 0.6);
-            backdrop-filter: blur(4px);
-            box-shadow: 0 0 15px var(--nomai-glow);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            width: 100%;
         }
 
-        .hud-title {
-            font-weight: bold;
-            color: var(--nomai-cyan);
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        h1 {
+            color: var(--nomai-teal);
+            font-size: 1.2rem;
             letter-spacing: 2px;
-            font-size: 0.9rem;
+            margin: 0 0 8px 0;
             text-transform: uppercase;
         }
 
-        .hud-status {
-            font-size: 0.75rem;
-            color: #5ce1e6;
+        .sector-title {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            margin: 0;
         }
 
-        .translator-container {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* SVG Spiral Canvas Styling */
-        .spiral-view {
+        /* SVG Wall Canvas */
+        .wall-container {
             width: 100%;
             height: 280px;
-            background: rgba(3, 12, 20, 0.8);
-            border: 1px solid var(--nomai-dim);
-            border-radius: 12px;
+            background: #090d12;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             margin-bottom: 20px;
             position: relative;
-            box-shadow: inset 0 0 20px rgba(0, 243, 255, 0.1);
+            overflow: hidden;
         }
 
         svg {
@@ -91,290 +70,263 @@
             height: 100%;
         }
 
-        .nomai-node {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .nomai-node circle {
-            fill: var(--bg-color);
-            stroke: var(--nomai-cyan);
-            stroke-width: 2;
-            transition: all 0.3s ease;
-        }
-
-        .nomai-node:hover circle, .nomai-node.active circle {
-            fill: var(--nomai-cyan);
-            box-shadow: 0 0 10px var(--nomai-cyan);
-            filter: drop-shadow(0px 0px 8px var(--nomai-cyan));
-        }
-
-        .nomai-node text {
-            fill: var(--nomai-cyan);
-            font-family: var(--font-family);
-            font-size: 11px;
-            font-weight: bold;
-            pointer-events: none;
-        }
-
         .nomai-path {
-            stroke: var(--nomai-dim);
-            stroke-width: 2;
+            stroke: var(--nomai-teal);
+            stroke-width: 3;
             fill: none;
-            stroke-dasharray: 4;
+            stroke-linecap: round;
+            opacity: 0.8;
             transition: all 0.5s ease;
         }
 
-        .nomai-path.active {
-            stroke: var(--nomai-cyan);
-            stroke-dasharray: 0;
-            filter: drop-shadow(0px 0px 4px var(--nomai-cyan));
+        .nomai-node {
+            fill: var(--card-bg);
+            stroke: var(--nomai-teal);
+            stroke-width: 2.5;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        /* Dialogue Box Styling */
-        .log-box {
-            width: 100%;
-            border: 1px solid var(--nomai-dim);
+        .nomai-node.active {
+            fill: var(--node-active);
+            stroke: #fff;
+            r: 10;
+        }
+
+        /* Dialogue Box */
+        .dialogue-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
-            background: rgba(5, 15, 25, 0.85);
-            backdrop-filter: blur(6px);
-            min-height: 220px;
+            min-height: 120px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
         }
 
-        .log-entry {
-            display: none;
-            margin-bottom: 15px;
-            padding-bottom: 12px;
-            border-bottom: 1px dashed rgba(0, 243, 255, 0.2);
-            animation: fadeIn 0.4s ease-in-out forwards;
-        }
-
-        .log-entry.visible {
-            display: block;
-        }
-
-        .speaker {
-            color: var(--nomai-cyan);
-            font-weight: bold;
-            margin-bottom: 5px;
-            letter-spacing: 1px;
-            display: inline-block;
-            background: rgba(0, 243, 255, 0.1);
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-
-        .text {
-            line-height: 1.5;
-            font-size: 0.95rem;
-            color: #e0f7fa;
-        }
-
-        .instruction-prompt {
-            text-align: center;
-            color: #4a7c89;
+        .speaker-tag {
             font-size: 0.85rem;
-            margin-top: 10px;
-            font-style: italic;
+            font-weight: bold;
+            color: var(--nomai-teal);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .dialogue-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 0;
         }
 
-        /* Nav Quick Switcher for testing */
-        .nav-footer {
-            margin-top: 25px;
+        /* Navigation Controls */
+        .controls {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
+            gap: 12px;
         }
 
-        .nav-btn {
-            background: transparent;
-            border: 1px solid var(--nomai-dim);
+        button {
+            background-color: var(--card-bg);
             color: var(--text-color);
-            padding: 6px 12px;
-            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
             cursor: pointer;
-            font-family: var(--font-family);
-            font-size: 0.75rem;
-            transition: 0.2s;
+            flex: 1;
+            transition: background 0.2s;
         }
 
-        .nav-btn:hover, .nav-btn.active {
-            border-color: var(--nomai-cyan);
-            color: var(--nomai-cyan);
-            background: rgba(0, 243, 255, 0.05);
+        button:hover:not(:disabled) {
+            background-color: var(--border-color);
+            color: #fff;
+        }
+
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Developer/Test Sector Selector */
+        .sector-nav {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .sector-btn {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            flex: initial;
         }
     </style>
 </head>
 <body>
 
-    <div class="header-hud">
-        <div class="hud-title">Nomai Translator v2.4</div>
-        <div class="hud-status" id="hud-location">SECTOR: UNKNOWN</div>
+<div class="container">
+    <header>
+        <h1>Nomai Recorder Interface</h1>
+        <p class="sector-title" id="sectorTitle">PROLOGUE</p>
+    </header>
+
+    <div class="wall-container">
+        <svg id="wallSvg" viewBox="0 0 360 280">
+            <!-- Dynamic paths & nodes rendered here -->
+        </svg>
     </div>
 
-    <div class="translator-container">
-        <!-- Interactive Spiral View -->
-        <div class="spiral-view">
-            <svg id="nomai-svg" viewBox="0 0 400 280">
-                <!-- SVG nodes & paths injected via JavaScript -->
-            </svg>
-        </div>
-
-        <!-- Dialogue Output Log -->
-        <div class="log-box" id="dialogue-box">
-            <!-- Transcripts injected dynamically -->
-        </div>
-        <div class="instruction-prompt">Tap any glowing spiral node to translate dialogue thread</div>
+    <div class="dialogue-card">
+        <div class="speaker-tag" id="speakerTag">SYSTEM</div>
+        <p class="dialogue-text" id="dialogueText">Initializing signal decryption...</p>
     </div>
 
-    <!-- Stop Switcher (Useful for manual override/testing) -->
-    <div class="nav-footer">
-        <button class="nav-btn" onclick="loadStop(1)">Stop 1</button>
-        <button class="nav-btn" onclick="loadStop(2)">Stop 2</button>
-        <button class="nav-btn" onclick="loadStop(3)">Stop 3</button>
-        <button class="nav-btn" onclick="loadStop(4)">Stop 4</button>
+    <div class="controls">
+        <button id="prevBtn" onclick="navigateNode(-1)">Previous</button>
+        <button id="nextBtn" onclick="navigateNode(1)">Next</button>
     </div>
 
-    <script>
-        const stopsData = {
-            1: {
-                title: "SECTOR 01: LAURIER LAUNCHPAD",
-                nodes: [
-                    { id: "node1", speaker: "POKE", text: "Clary! The secondary escape pod's alignment thrusters misfired again. I swear the warp core casing is held together by pure luck and bad intentions.", cx: 200, cy: 140, path: "" },
-                    { id: "node2", speaker: "CLARY", text: "Poke, please tell me my brother did not land the shuttle into another hollow crust. Where is Yarrow’s signal coming from?", cx: 120, cy: 90, path: "M200,140 Q150,110 120,90" },
-                    { id: "node3", speaker: "POKE", text: "Telemetry shows his shuttle came down in a narrow, shadowed fissure just north of us. It looks overgrown with brick pathways and enclosed laneways.", cx: 80, cy: 170, path: "M120,90 Q90,130 80,170" },
-                    { id: "node4", speaker: "CLARY", text: "Is he near those massive iron transport rails?", cx: 280, cy: 80, path: "M200,140 Q250,100 280,80" },
-                    { id: "node5", speaker: "POKE", text: "No, thankfully! He is tucked away in a shadowed passage right between the Mentana axis and St-Denis.", cx: 330, cy: 150, path: "M280,80 Q320,110 330,150" },
-                    { id: "node6", speaker: "POKE", text: "If you are setting out from this launchpad to find him, head north along the Mentana path until you cross Saint-Vallier. Look for the narrow stone passage where the shadows deepen.", cx: 260, cy: 220, path: "M330,150 Q300,200 260,220" },
-                    { id: "node7", speaker: "POKE", text: "And do it quickly! If Yarrow messes with the emergency thrusters one more time, he’s going to trigger a localized gravity collapse... ", cx: 170, cy: 230, path: "M260,220 Q210,240 170,230" }
-                ]
-            },
-            2: {
-                title: "SECTOR 02: SHADOWED FISSURE",
-                nodes: [
-                    { id: "node1", speaker: "CASAVA", text: "Maura! Have you seen Private Shuttle 03? Coleus was supposed to calibrate the Nomai translator, but his vessel vector drifted completely off-course!", cx: 200, cy: 140, path: "" },
-                    { id: "node2", speaker: "MAURA", text: "I monitored his trajectory. His vessel descended near a massive aquatic basin. The entire planet surface is dominated by crashing water and towering stone arches.", cx: 290, cy: 110, path: "M200,140 Q250,120 290,110" },
-                    { id: "node3", speaker: "CASAVA", text: "Did he crash into the deep ocean again? I told him those landing struts weren't rated for high-density liquids!", cx: 310, cy: 190, path: "M290,110 Q310,150 310,190" },
-                    { id: "node4", speaker: "MAURA", text: "No, the ship landed safely right beside the water's edge. If you are tracking him from the fissure, set your trajectory west toward the major meridian of Saint-Laurent.", cx: 110, cy: 120, path: "M200,140 Q150,120 110,120" },
-                    { id: "node5", speaker: "CASAVA", text: "Saint-Laurent... got it. Which direction along the axis?", cx: 90, cy: 200, path: "M110,120 Q90,160 90,200" },
-                    { id: "node6", speaker: "MAURA", text: "Follow Saint-Laurent south until it intersects the grand line of Laurier. You will see the heavy water basin sitting right in the shadow of the twin-spired stone cathedral.", cx: 180, cy: 230, path: "M90,200 Q130,230 180,230" },
-                    { id: "node7", speaker: "CASAVA", text: "Understood. I'll go retrieve him before he drops another warp core into the fountain. We still need his quantum calculations if we ever hope to locate the Eye!", cx: 200, cy: 60, path: "M200,140 Q190,90 200,60" }
-                ]
-            },
-            3: {
-                title: "SECTOR 03: AQUATIC BASIN",
-                nodes: [
-                    { id: "node1", speaker: "COLEUS", text: "Melora, I have lost my favorite wrench again. I suspect it drifted into the central gravity well during transit.", cx: 200, cy: 140, path: "" },
-                    { id: "node2", speaker: "MELORA", text: "Coleus, your wrench is not in the gravity well. You left it at the northern landing pad near the red stone structures.", cx: 130, cy: 80, path: "M200,140 Q160,100 130,80" },
-                    { id: "node3", speaker: "COLEUS", text: "Ah. The sun-baked planet with the massive glass and steel canopy structure overhead?", cx: 70, cy: 140, path: "M130,80 Q90,100 70,140" },
-                    { id: "node4", speaker: "MELORA", text: "Precisely. To reach that landing pad from the water basin, proceed north-east. Intersect the sheltered glass canopy path of St-Hubert and head north along its length.", cx: 120, cy: 210, path: "M70,140 Q90,180 120,210" },
-                    { id: "node5", speaker: "COLEUS", text: "Right past the bustling trade sectors?", cx: 270, cy: 80, path: "M200,140 Q240,100 270,80" },
-                    { id: "node6", speaker: "MELORA", text: "Yes! Keep going north until you hit the cross-axis of Saint-Zotique. Look for the wide, red-brick plaza where the steel canopy framework meets the street corner.", cx: 330, cy: 140, path: "M270,80 Q310,100 330,140" },
-                    { id: "node7", speaker: "COLEUS", text: "Perfect. Once I retrieve my wrench, we can resume assembling the Nomai Solar Sails. I refuse to let us be late for the alignment at the Eye!", cx: 280, cy: 210, path: "M330,140 Q310,180 280,210" }
-                ]
-            },
-            4: {
-                title: "SECTOR 04: RED-BRICK PLAZA",
-                nodes: [
-                    { id: "node1", speaker: "YARROW", text: "Ida! All warp core frequencies across the sector are stabilizing! The signal from the Eye of the Universe is finally converging!", cx: 200, cy: 140, path: "" },
-                    { id: "node2", speaker: "IDAHO", text: "Outstanding! Where are the final spatial coordinates pointing?", cx: 140, cy: 80, path: "M200,140 Q160,100 140,80" },
-                    { id: "node3", speaker: "YARROW", text: "Just west of your current position at the red-brick plaza! Follow Saint-Zotique west across Saint-Dominique until you find the circular green grove bounded by Dante Street.", cx: 90, cy: 160, path: "M140,80 Q100,110 90,160" },
-                    { id: "node4", speaker: "IDAHO", text: "Wait... my thermal sensors are picking up a high-energy heat source at the center of the trees. Is that a super-dense star?", cx: 260, cy: 80, path: "M200,140 Q240,100 260,80" },
-                    { id: "node5", speaker: "YARROW", text: "No, it appears to be a gathering hearth—a central campfire! And my localized scanners are detecting massive quantities of baked crusts, melted cheese, and espresso desserts.", cx: 310, cy: 160, path: "M260,80 Q300,110 310,160" },
-                    { id: "node6", speaker: "IDAHO", text: "Carbon-based culinary anomalies?! Say no more! Gather all lost travelers in the sector immediately and proceed to the hearth. The search is complete!", cx: 200, cy: 230, path: "M310,160 Q260,220 200,230" }
-                ]
-            }
-        };
+    <!-- Quick test selector for all QR stops -->
+    <div class="sector-nav">
+        <button class="sector-btn" onclick="loadStop(0)">Prologue</button>
+        <button class="sector-btn" onclick="loadStop(1)">Stop 1</button>
+        <button class="sector-btn" onclick="loadStop(2)">Stop 2</button>
+        <button class="sector-btn" onclick="loadStop(3)">Stop 3</button>
+        <button class="sector-btn" onclick="loadStop(4)">Stop 4</button>
+    </div>
+</div>
 
-        // Parse query parameter ?stop=X
-        function getStopFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const stopParam = parseInt(urlParams.get('stop'));
-            return (stopParam && stopParam >= 1 && stopParam <= 4) ? stopParam : 1;
+<script>
+const stopsData = {
+    0: {
+        title: "VESSEL WEAVER LOG: PROLOGUE",
+        nodes: [
+            { id: "node1", speaker: "SYSTEM LOG", text: "Dimensional warp complete. The prior universe's solar cycle has reached its natural end.", cx: 180, cy: 60, path: "" },
+            { id: "node2", speaker: "TRANSMISSION", text: "Vessel 'Weaver' successfully passed through the quantum threshold. Thermal and gravitational anomalies are stabilizing in this new system.", cx: 100, cy: 110, path: "M180,60 Q130,80 100,110" },
+            { id: "node3", speaker: "LOG ENTRY", text: "Upon atmospheric entry, structural turbulence forced an automated escape pod jettison. Emergency shuttles have scattered across this unknown world's sector coordinates.", cx: 260, cy: 120, path: "M100,110 Q180,130 260,120" },
+            { id: "node4", speaker: "STATUS", text: "Core life support operational. Local atmosphere: 21% oxygen, rich carbon-based flora, mild solar radiation.", cx: 80, cy: 190, path: "M260,120 Q170,160 80,190" },
+            { id: "node5", speaker: "VESSEL LOG", text: "OBJECTIVE: All deployed Nomai shuttles must recalibrate warp-frequency markers, establish contact with nearby escape pods, and converge at the secondary assembly vector. Initiate traveler signal search.", cx: 220, cy: 230, path: "M80,190 Q140,220 220,230" }
+        ]
+    },
+    1: {
+        title: "SECTOR 01: LAURIER LAUNCHPAD",
+        nodes: [
+            { id: "node1", speaker: "POKE", text: "Clary! The escape pod thrusters misfired during transit. Atmospheric sensors here are alarming—21% gaseous oxygen and dense leaf-based flora everywhere!", cx: 180, cy: 60, path: "" },
+            { id: "node2", speaker: "CLARY", text: "Is Yarrow safe? Where did his pod land?", cx: 100, cy: 110, path: "M180,60 Q130,80 100,110" },
+            { id: "node3", speaker: "POKE", text: "Telemetry shows he came down a few hundred meters North of this launchpad, tucked in a quiet green pocket right off the major St-Denis transit corridor, at Rue du Carmel.", cx: 260, cy: 120, path: "M100,110 Q180,130 260,120" },
+            { id: "node4", speaker: "POKE", text: "To reach him, cross West to the St-Denis bike pathway, ride North, and enter Parc Carmel. Hurry, before he tries recalibrating the thrusters himself!", cx: 80, cy: 190, path: "M260,120 Q170,160 80,190" },
+            { id: "node5", speaker: "CLARY", text: "Right. Because Yarrow's manual recalibrations always end so peacefully. On my way.", cx: 220, cy: 230, path: "M80,190 Q140,220 220,230" }
+        ]
+    },
+    2: {
+        title: "SECTOR 02: PARC CARMEL",
+        nodes: [
+            { id: "node1", speaker: "CASAVA", text: "Maura! Private Shuttle 03 drifted off-course. Coleus landed in a hyper-advanced sector dominated by giant glass monoliths built over old rail lines.", cx: 180, cy: 70, path: "" },
+            { id: "node2", speaker: "MAURA", text: "How do we reach that research sector from Parc Carmel?", cx: 90, cy: 130, path: "M180,70 Q120,95 90,130" },
+            { id: "node3", speaker: "CASAVA", text: "Ride North along the St-Denis bike line, vector West over the Rosemont elevated bridge toward Saint-Urbain, and look for the open concrete plaza at the MILA complex.", cx: 270, cy: 140, path: "M90,130 Q180,150 270,140" },
+            { id: "node4", speaker: "MAURA", text: "Understood. I will retrieve him so we can prepare the final launch!", cx: 170, cy: 220, path: "M270,140 Q220,190 170,220" }
+        ]
+    },
+    3: {
+        title: "SECTOR 03: MILA PLAZA",
+        nodes: [
+            { id: "node1", speaker: "COLEUS", text: "Melora, bad news... I left my quantum locator at the open brick-and-wood pedestrian plaza at the entrance of Little Italy.", cx: 120, cy: 80, path: "" },
+            { id: "node2", speaker: "MELORA", text: "Coleus, if I had a warp core for every critical tool you've misplaced across different dimensions, we'd have built an entire fleet by now.", cx: 240, cy: 110, path: "M120,80 Q180,90 240,110" },
+            { id: "node3", speaker: "MELORA", text: "Fine. From the MILA complex, ride North along Clark or Saint-Urbain to Saint-Zotique, then head East to Plaza Shamrock at Saint-Laurent. Try not to leave yourself behind this time.", cx: 100, cy: 180, path: "M240,110 Q160,140 100,180" },
+            { id: "node4", speaker: "COLEUS", text: "Duly noted! Once retrieved, we'll have all the core components needed to regroup the crew.", cx: 230, cy: 220, path: "M100,180 Q170,200 230,220" }
+        ]
+    },
+    4: {
+        title: "SECTOR 04: PLAZA SHAMROCK",
+        nodes: [
+            { id: "node1", speaker: "YARROW", text: "Ida! All warp core frequencies are converging on the central gathering point—the circular tree grove at Parc Dante!", cx: 180, cy: 60, path: "" },
+            { id: "node2", speaker: "IDA", text: "You're right, just two blocks North-East of Plaza Shamrock! We follow Saint-Zotique East, turn onto Dante Street, and enter the park.", cx: 90, cy: 120, path: "M180,60 Q130,80 90,120" },
+            { id: "node3", speaker: "YARROW", text: "Scanners confirm all shuttle signals are aligning around an active heat source in the clearing.", cx: 270, cy: 130, path: "M90,120 Q170,140 270,130" },
+            { id: "node4", speaker: "IDA", text: "Outstanding! The crew is reunited. Once everyone arrives at the hearth, we ignite the engines for our next voyage!", cx: 180, cy: 220, path: "M270,130 Q220,180 180,220" }
+        ]
+    }
+};
+
+let currentStop = 0;
+let currentNodeIndex = 0;
+
+function getStopFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const stopParam = parseInt(urlParams.get('stop'));
+    return (stopParam >= 0 && stopParam <= 4) ? stopParam : 0;
+}
+
+function loadStop(stopIndex) {
+    currentStop = stopIndex;
+    currentNodeIndex = 0;
+    
+    const stopData = stopsData[currentStop];
+    document.getElementById('sectorTitle').innerText = stopData.title;
+
+    renderWall();
+    updateUI();
+}
+
+function renderWall() {
+    const svg = document.getElementById('wallSvg');
+    const nodes = stopsData[currentStop].nodes;
+
+    let svgHtml = '';
+
+    // Render paths up to current active node
+    for (let i = 0; i <= currentNodeIndex; i++) {
+        if (nodes[i].path) {
+            svgHtml += `<path d="${nodes[i].path}" class="nomai-path" />`;
         }
+    }
 
-        function loadStop(stopNumber) {
-            const stop = stopsData[stopNumber];
-            document.getElementById('hud-location').innerText = stop.title;
-            
-            const svg = document.getElementById('nomai-svg');
-            const dialogueBox = document.getElementById('dialogue-box');
-            
-            svg.innerHTML = '';
-            dialogueBox.innerHTML = '';
+    // Render nodes up to current active node
+    for (let i = 0; i <= currentNodeIndex; i++) {
+        const isActive = i === currentNodeIndex ? 'active' : '';
+        const radius = i === currentNodeIndex ? 9 : 6;
+        svgHtml += `<circle cx="${nodes[i].cx}" cy="${nodes[i].cy}" r="${radius}" class="nomai-node ${isActive}" onclick="selectNode(${i})" />`;
+    }
 
-            // Update active state on nav buttons
-            document.querySelectorAll('.nav-btn').forEach((btn, index) => {
-                btn.classList.toggle('active', index + 1 === stopNumber);
-            });
+    svg.innerHTML = svgHtml;
+}
 
-            // Render Nodes and Paths
-            stop.nodes.forEach((node, index) => {
-                // Render Connecting Line Path
-                if (node.path) {
-                    const pathElem = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                    pathElem.setAttribute('d', node.path);
-                    pathElem.setAttribute('class', 'nomai-path');
-                    pathElem.setAttribute('id', `path-${node.id}`);
-                    svg.appendChild(pathElem);
-                }
+function updateUI() {
+    const nodes = stopsData[currentStop].nodes;
+    const currentNode = nodes[currentNodeIndex];
 
-                // Render Node Group
-                const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                group.setAttribute('class', `nomai-node ${index === 0 ? 'active' : ''}`);
-                group.setAttribute('id', `group-${node.id}`);
-                group.onclick = () => revealNode(node.id);
+    document.getElementById('speakerTag').innerText = currentNode.speaker;
+    document.getElementById('dialogueText').innerText = currentNode.text;
 
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', node.cx);
-                circle.setAttribute('cy', node.cy);
-                circle.setAttribute('r', '14');
+    document.getElementById('prevBtn').disabled = currentNodeIndex === 0;
+    document.getElementById('nextBtn').disabled = currentNodeIndex === nodes.length - 1;
 
-                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                text.setAttribute('x', node.cx);
-                text.setAttribute('y', node.cy + 4);
-                text.setAttribute('text-anchor', 'middle');
-                text.textContent = node.speaker.substring(0, 2);
+    renderWall();
+}
 
-                group.appendChild(circle);
-                group.appendChild(text);
-                svg.appendChild(group);
+function selectNode(index) {
+    currentNodeIndex = index;
+    updateUI();
+}
 
-                // Render Dialogue Entries
-                const entry = document.createElement('div');
-                entry.className = `log-entry ${index === 0 ? 'visible' : ''}`;
-                entry.id = `log-${node.id}`;
-                entry.innerHTML = `
-                    <div class="speaker">${node.speaker}</div>
-                    <div class="text">${node.text}</div>
-                `;
-                dialogueBox.appendChild(entry);
-            });
-        }
+function navigateNode(direction) {
+    const nodes = stopsData[currentStop].nodes;
+    const newIndex = currentNodeIndex + direction;
 
-        function revealNode(nodeId) {
-            const nodeGroup = document.getElementById(`group-${nodeId}`);
-            const pathElem = document.getElementById(`path-${nodeId}`);
-            const logEntry = document.getElementById(`log-${nodeId}`);
+    if (newIndex >= 0 && newIndex < nodes.length) {
+        currentNodeIndex = newIndex;
+        updateUI();
+    }
+}
 
-            if (nodeGroup) nodeGroup.classList.add('active');
-            if (pathElem) pathElem.classList.add('active');
-            if (logEntry) {
-                logEntry.classList.add('visible');
-                logEntry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        }
+// Initialize on page load based on URL parameter ?stop=N
+window.onload = () => {
+    const initialStop = getStopFromUrl();
+    loadStop(initialStop);
+};
+</script>
 
-        // Initialize on load
-        window.onload = () => {
-            const currentStop = getStopFromUrl();
-            loadStop(currentStop);
-        };
-    </script>
 </body>
 </html>
