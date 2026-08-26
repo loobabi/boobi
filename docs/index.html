@@ -29,7 +29,7 @@
             box-sizing: border-box;
         }
 
-        /* Particle Stars Canvas Overlay */
+        /* Star Dust Particle Layer */
         #spaceCanvas {
             position: fixed;
             top: 0;
@@ -130,18 +130,12 @@
             animation: pulseNode 1.8s infinite alternate;
         }
 
-        .nomai-node.locked {
-            opacity: 0.25;
-            cursor: not-allowed;
-            stroke: #406080;
-        }
-
         @keyframes pulseNode {
             from { filter: drop-shadow(0px 0px 8px #00ffff); }
             to { filter: drop-shadow(0px 0px 18px #ffffff); }
         }
 
-        /* Dialogue Box */
+        /* Dialogue Card */
         .dialogue-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-cyan);
@@ -169,7 +163,7 @@
             color: #f0fcfd;
         }
 
-        /* Navigation Controls */
+        /* Controls */
         .controls {
             display: flex;
             justify-content: space-between;
@@ -202,7 +196,6 @@
             box-shadow: none;
         }
 
-        /* Developer/Test Sector Selector */
         .sector-nav {
             margin-top: 30px;
             padding-top: 15px;
@@ -232,7 +225,7 @@
 
     <div class="wall-container">
         <svg id="wallSvg" viewBox="0 0 360 300">
-            <!-- Dynamic paths & nodes rendered here -->
+            <!-- Dynamic spirals and nodes render here -->
         </svg>
     </div>
 
@@ -256,11 +249,11 @@
 </div>
 
 <script>
-// --- Ambient Star / Dust Particle Field ---
+// --- Ambient Blue Dust Particle Field ---
 const canvas = document.getElementById('spaceCanvas');
 const ctx = canvas.getContext('2d');
-
 let particles = [];
+
 function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -268,13 +261,13 @@ function resizeCanvas() {
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
-for (let i = 0; i < 70; i++) {
+for (let i = 0; i < 75; i++) {
     particles.push({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight,
         radius: Math.random() * 1.8 + 0.5,
         alpha: Math.random() * 0.8 + 0.2,
-        speed: Math.random() * 0.4 + 0.1
+        speed: Math.random() * 0.35 + 0.1
     });
 }
 
@@ -286,8 +279,8 @@ function animateParticles() {
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(57, 197, 187, ${p.alpha})`;
-        ctx.shadowBlur = 8;
+        ctx.fillStyle = `rgba(0, 255, 255, ${p.alpha})`;
+        ctx.shadowBlur = 6;
         ctx.shadowColor = "#00ffff";
         ctx.fill();
     });
@@ -295,7 +288,7 @@ function animateParticles() {
 }
 animateParticles();
 
-// --- Nomai Wall Data Structure ---
+// --- Nomai Dialogue & Branch Data ---
 const stopsData = {
     0: {
         title: "VESSEL WEAVER LOG: PROLOGUE",
@@ -308,38 +301,38 @@ const stopsData = {
         ]
     },
     1: {
-        title: "SECTOR 01: LAURIER LAUNCHPAD",
+        title: "SECTOR 01: LAUNCHPAD VECTOR",
         nodes: [
-            { id: "node1", speaker: "POKE", text: "Clary! The escape pod thrusters misfired during transit. Atmospheric sensors here are alarming—21% gaseous oxygen and dense leaf-based flora everywhere!", cx: 180, cy: 50, path: "" },
+            { id: "node1", speaker: "POKE", text: "Clary! The escape pod thrusters misfired during transit. Atmospheric sensors here are alarming—overgrown floral canopies and brick ruins everywhere!", cx: 180, cy: 50, path: "" },
             { id: "node2", speaker: "CLARY", text: "Is Yarrow safe? Where did his pod land?", cx: 100, cy: 110, path: "M180,50 Q130,80 100,110" },
-            { id: "node3", speaker: "POKE", text: "Telemetry shows he came down a few hundred meters North of this launchpad, tucked in a quiet green pocket right off the major St-Denis transit corridor, at Rue du Carmel.", cx: 260, cy: 120, path: "M100,110 Q180,130 260,120" },
-            { id: "node4", speaker: "POKE", text: "To reach him, cross West to the St-Denis bike pathway, ride North, and enter Parc Carmel. Hurry, before he tries recalibrating the thrusters himself!", cx: 90, cy: 190, path: "M260,120 Q170,160 90,190" },
+            { id: "node3", speaker: "POKE", text: "Telemetry shows he came down just around the corner, tucked inside the shaded Ruelle Verte along Henri-Julien and Demers.", cx: 260, cy: 120, path: "M100,110 Q180,130 260,120" },
+            { id: "node4", speaker: "POKE", text: "Head right into the brick alleyway to locate his pod. Once retrieved, vector North-East toward Parc Laurier to locate the second signal near the aquatic zone!", cx: 90, cy: 190, path: "M260,120 Q170,160 90,190" },
             { id: "node5", speaker: "CLARY", text: "Right. Because Yarrow's manual recalibrations always end so peacefully. On my way.", cx: 220, cy: 245, path: "M90,190 Q140,230 220,245" }
         ]
     },
     2: {
-        title: "SECTOR 02: PARC CARMEL",
+        title: "SECTOR 02: LA RUELLE VERTE",
         nodes: [
-            { id: "node1", speaker: "CASAVA", text: "Maura! Private Shuttle 03 drifted off-course. Coleus landed in a hyper-advanced sector dominated by giant glass monoliths built over old rail lines.", cx: 180, cy: 60, path: "" },
-            { id: "node2", speaker: "MAURA", text: "How do we reach that research sector from Parc Carmel?", cx: 90, cy: 130, path: "M180,60 Q120,95 90,130" },
-            { id: "node3", speaker: "CASAVA", text: "Ride North along the St-Denis bike line, vector West over the Rosemont elevated bridge toward Saint-Urbain, and look for the open concrete plaza at the MILA complex.", cx: 270, cy: 140, path: "M90,130 Q180,150 270,140" },
-            { id: "node4", speaker: "MAURA", text: "Understood. I will retrieve him so we can prepare the final launch!", cx: 170, cy: 230, path: "M270,140 Q220,190 170,230" }
+            { id: "node1", speaker: "CASAVA", text: "Maura! Private Shuttle 02 landed near a massive liquid basin. Aquatic sensors are reading intense water flow!", cx: 180, cy: 60, path: "" },
+            { id: "node2", speaker: "MAURA", text: "How do we reach that aquatic sector from the alleyway?", cx: 90, cy: 130, path: "M180,60 Q120,95 90,130" },
+            { id: "node3", speaker: "CASAVA", text: "Head East toward Sir-Wilfrid-Laurier Park. Look for the splash pad and water fountain clearing on the West side of the park.", cx: 270, cy: 140, path: "M90,130 Q180,150 270,140" },
+            { id: "node4", speaker: "MAURA", text: "Understood! I will secure the thruster core near the splash pools, then vector North toward the concrete sector.", cx: 170, cy: 230, path: "M270,140 Q220,190 170,230" }
         ]
     },
     3: {
-        title: "SECTOR 03: MILA PLAZA",
+        title: "SECTOR 03: PARC LAURIER",
         nodes: [
-            { id: "node1", speaker: "COLEUS", text: "Melora, bad news... I left my quantum locator at the open brick-and-wood pedestrian plaza at the entrance of Little Italy.", cx: 120, cy: 70, path: "" },
+            { id: "node1", speaker: "COLEUS", text: "Melora, bad news... I drifted off-course and landed in a brutalist sector dominated by heavy concrete pillars and vibrant wall murals.", cx: 120, cy: 70, path: "" },
             { id: "node2", speaker: "MELORA", text: "Coleus, if I had a warp core for every critical tool you've misplaced across different dimensions, we'd have built an entire fleet by now.", cx: 240, cy: 110, path: "M120,70 Q180,85 240,110" },
-            { id: "node3", speaker: "MELORA", text: "Fine. From the MILA complex, ride North along Clark or Saint-Urbain to Saint-Zotique, then head East to Plaza Shamrock at Saint-Laurent. Try not to leave yourself behind this time.", cx: 100, cy: 180, path: "M240,110 Q160,140 100,180" },
+            { id: "node3", speaker: "MELORA", text: "Fine. From Parc Laurier, head North along the St-Denis pathway, turn West onto Boulevard de Rosemont, and locate the Van Horne skatepark under the overpass.", cx: 100, cy: 180, path: "M240,110 Q160,140 100,180" },
             { id: "node4", speaker: "COLEUS", text: "Duly noted! Once retrieved, we'll have all the core components needed to regroup the crew.", cx: 230, cy: 235, path: "M100,180 Q170,205 230,235" }
         ]
     },
     4: {
-        title: "SECTOR 04: PLAZA SHAMROCK",
+        title: "SECTOR 04: VAN HORNE SKATEPARK",
         nodes: [
-            { id: "node1", speaker: "YARROW", text: "Ida! All warp core frequencies are converging on the central gathering point—the circular tree grove at Parc Dante!", cx: 180, cy: 60, path: "" },
-            { id: "node2", speaker: "IDA", text: "You're right, just two blocks North-East of Plaza Shamrock! We follow Saint-Zotique East, turn onto Dante Street, and enter the park.", cx: 90, cy: 120, path: "M180,60 Q130,80 90,120" },
+            { id: "node1", speaker: "YARROW", text: "Ida! All warp core frequencies are converging on the central gathering point—the shaded grove at Parc Petite-Italie!", cx: 180, cy: 60, path: "" },
+            { id: "node2", speaker: "IDA", text: "You're right, just a few blocks North-West! Take Saint-Laurent Boulevard North to Saint-Zotique W and enter Little Italy Park.", cx: 90, cy: 120, path: "M180,60 Q130,80 90,120" },
             { id: "node3", speaker: "YARROW", text: "Scanners confirm all shuttle signals are aligning around an active heat source in the clearing.", cx: 270, cy: 130, path: "M90,120 Q170,140 270,130" },
             { id: "node4", speaker: "IDA", text: "Outstanding! The crew is reunited. Once everyone arrives at the hearth, we ignite the engines for our next voyage!", cx: 180, cy: 230, path: "M270,130 Q220,180 180,230" }
         ]
@@ -348,7 +341,7 @@ const stopsData = {
 
 let currentStop = 0;
 let currentNodeIndex = 0;
-let unlockedNodeIndex = 0; // Step-by-step branching unlock state
+let unlockedNodeIndex = 0;
 
 function getStopFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -361,9 +354,7 @@ function loadStop(stopIndex) {
     currentNodeIndex = 0;
     unlockedNodeIndex = 0;
     
-    const stopData = stopsData[currentStop];
-    document.getElementById('sectorTitle').innerText = stopData.title;
-
+    document.getElementById('sectorTitle').innerText = stopsData[currentStop].title;
     updateUI();
 }
 
@@ -373,14 +364,14 @@ function renderWall() {
 
     let svgHtml = '';
 
-    // Render paths up to unlocked count
+    // Draw paths up to current branch level
     for (let i = 0; i <= unlockedNodeIndex; i++) {
         if (nodes[i].path) {
             svgHtml += `<path d="${nodes[i].path}" class="nomai-path" />`;
         }
     }
 
-    // Render nodes with status (active, unlocked, locked)
+    // Draw nodes
     for (let i = 0; i <= unlockedNodeIndex; i++) {
         let nodeClass = 'nomai-node';
         if (i === currentNodeIndex) {
@@ -411,7 +402,7 @@ function selectNode(index) {
     if (index <= unlockedNodeIndex) {
         currentNodeIndex = index;
         
-        // Unlocks next sequential node/branch stem if clicking current endpoint
+        // Unlocks next sequential node when clicking current endpoint
         if (index === unlockedNodeIndex && unlockedNodeIndex < stopsData[currentStop].nodes.length - 1) {
             unlockedNodeIndex++;
         }
@@ -430,8 +421,7 @@ function navigateNode(direction) {
 }
 
 window.onload = () => {
-    const initialStop = getStopFromUrl();
-    loadStop(initialStop);
+    loadStop(getStopFromUrl());
 };
 </script>
 
